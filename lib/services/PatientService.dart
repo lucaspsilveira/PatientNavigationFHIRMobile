@@ -38,4 +38,12 @@ class PatientService {
         headers: headers, body: json.encode(patient.toJson()));
     print(result.body + result.statusCode.toString());
   }
+
+  static Future putPatient(Patient patient) async {
+    var headers = {'Content-type': 'application/json'};
+    var patientId = patient.id?.value;
+    var result = await put(Uri.parse('$server/$resource/$patientId'),
+        headers: headers, body: json.encode(patient.toJson()));
+    print(result.body + result.statusCode.toString());
+  }
 }
