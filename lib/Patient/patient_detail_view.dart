@@ -50,11 +50,14 @@ class MyCustomFormState extends State<MyCustomForm> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     var firstName = widget.patient.name?.first.given?.first ?? "";
-    var familyName =  widget.patient.name?.first.family ?? "";
+    var familyName = widget.patient.name?.first.family ?? "";
     controllername.text = firstName + " " + familyName;
     controllerbirthDate.text =
         widget.patient.birthDate?.value?.toString() ?? "";
-    controllertelecom.text = widget.patient.telecom?[1].value ?? "";
+    var telecom = widget.patient.telecom
+        ?.where((element) => element.use == ContactPointUse.mobile);
+    controllertelecom.text =
+        telecom != null && telecom.isNotEmpty ? telecom.first.value ?? "" : "";
     controlleraddressline.text =
         widget.patient.address?.first.line?.first ?? "";
     controlleraddressdistrict.text =
@@ -91,8 +94,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
-                  controller: TextEditingController(
-                      text: widget.patient.birthDate?.value?.toString() ?? ""),
+                  controller: controllerbirthDate,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Data de nascimento',
@@ -109,8 +111,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
-                  controller: TextEditingController(
-                      text: widget.patient.telecom?[1].value ?? ""),
+                  controller: controllertelecom,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Telefone do Paciente',
@@ -127,8 +128,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
-                  controller: TextEditingController(
-                      text: widget.patient.address?.first.line?.first ?? ""),
+                  controller: controlleraddressline,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Endereço',
@@ -145,8 +145,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
-                  controller: TextEditingController(
-                      text: widget.patient.address?.first.district ?? ""),
+                  controller: controlleraddressdistrict,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Bairro',
@@ -163,8 +162,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
-                  controller: TextEditingController(
-                      text: widget.patient.address?.first.postalCode ?? ""),
+                  controller: controlleraddresspostalCode,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Código Postal',
@@ -181,8 +179,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
-                  controller: TextEditingController(
-                      text: widget.patient.address?.first.city ?? ""),
+                  controller: controlleraddresscity,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Cidade',
@@ -199,8 +196,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
-                  controller: TextEditingController(
-                      text: widget.patient.address?.first.state ?? ""),
+                  controller: controlleraddressstate,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Estado',
@@ -217,8 +213,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
-                  controller: TextEditingController(
-                      text: widget.patient.address?.first.country ?? ""),
+                  controller: controlleraddresscountry,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'País',
@@ -243,11 +238,29 @@ class MyCustomFormState extends State<MyCustomForm> {
                       print(controllername.text);
 
                       var changedPatient = patient.copyWith(
-                        name: [
-                          HumanName(family: controllername.text.split(" ")[1], given: [controllername.text.split(" ")[0]])
-                        ],
-                        birthDate: Date.fromDateTime(DateTime.parse(controllerbirthDate.text))
-                      );
+                          name: [
+                            HumanName(
+                                family: controllername.text.split(" ")[1],
+                                given: [controllername.text.split(" ")[0]])
+                          ],
+                          birthDate: Date.fromDateTime(
+                              DateTime.parse(controllerbirthDate.text)),
+                          address: [
+                            Address(
+                                city: controlleraddresscity.text,
+                                district: controlleraddressdistrict.text,
+                                country: controlleraddresscountry.text,
+                                state: controlleraddressstate.text,
+                                line: [controlleraddressline.text],
+                                postalCode: controlleraddresspostalCode.text)
+                          ],
+                          telecom: [
+                            ContactPoint(
+                                use: ContactPointUse.mobile,
+                                rank: PositiveInt(1),
+                                system: ContactPointSystem.phone,
+                                value: controllertelecom.text)
+                          ]);
 
                       //patient.birthDate = Date.fromDateTime(DateTime.parse(controllerbirthDate.text));
 

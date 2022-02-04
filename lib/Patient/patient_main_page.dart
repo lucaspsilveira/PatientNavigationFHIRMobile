@@ -23,10 +23,12 @@ class _PatientMainPage extends State<PatientMainPage> {
             var itemCount = snapshot.data?.length ?? 0;
             List<Widget> lista = [];
             snapshot.data?.forEach((element) {
+              var firstName = element.name?.first.given?.first ?? "";
+              var familyName = element.name?.first.family ?? "";
               var a = Card(
                   child: ListTile(
                 leading: const Icon(Icons.person),
-                title: Text(element.name?.first.given?.first ?? ""),
+                title: Text(firstName + " " + familyName),
                 trailing: Column(
                   children: <Widget>[
                     IconButton(
