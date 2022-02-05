@@ -1,5 +1,9 @@
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:patient_navigation_fhir_mobile/Appointment/appointment_create_view.dart';
+import 'package:patient_navigation_fhir_mobile/MedicationStatement/medicationstatement_create_view.dart';
+import 'package:patient_navigation_fhir_mobile/procedure/procedure_create_view.dart';
 import 'package:patient_navigation_fhir_mobile/services/PatientService.dart';
 
 class PatientDetailView extends StatelessWidget {
@@ -11,7 +15,81 @@ class PatientDetailView extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Detalhes do paciente'),
         ),
-        body: MyCustomForm(patient: patient));
+        body: MyCustomForm(patient: patient),
+        floatingActionButton:
+            // FloatingActionButton(
+            //     backgroundColor: Colors.red,
+            //     child: const Icon(Icons.medication_outlined),
+            //     onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) =>
+            //                 MedicationStatementCreateView(patient: this.patient)),
+            //       );
+            //     })
+            SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: const IconThemeData(size: 22),
+          backgroundColor: Colors.blue,
+          visible: patient.id?.value?.isNotEmpty == true,
+          curve: Curves.bounceIn,
+          children: [
+            // FAB 1
+            SpeedDialChild(
+                child: const Icon(Icons.calendar_today_outlined),
+                backgroundColor: Colors.blue,
+                onTap: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                         builder: (context) =>
+                             AppointmentCreateView(patient: patient)),
+                   );
+                },
+                label: 'Registrar Apontamento',
+                labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    fontSize: 16.0),
+                labelBackgroundColor: Colors.blue),
+            // FAB 2
+            SpeedDialChild(
+                child: const Icon(Icons.healing),
+                backgroundColor: Colors.blue,
+                onTap: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                         builder: (context) =>
+                             ProcedureCreateView(patient: patient)),
+                   );
+                },
+                label: 'Registrar Procedimento',
+                labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    fontSize: 16.0),
+                labelBackgroundColor: Colors.blue),
+            SpeedDialChild(
+                child: const Icon(Icons.medical_services),
+                backgroundColor: Colors.blue,
+                onTap: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                         builder: (context) =>
+                             MedicationStatementCreateView(patient: patient)),
+                   );
+                },
+                label: 'Registrar declaração de medicamento',
+                labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    fontSize: 16.0),
+                labelBackgroundColor: Colors.blue)
+          ],
+        ));
   }
 }
 
@@ -227,7 +305,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 16.0),
                 child: ElevatedButton(
                   onPressed: () {
                     // Validate returns true if the form is valid, or false otherwise.
@@ -269,11 +348,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                       );
                       if (changedPatient.id?.value != null) {
                         PatientService.putPatient(changedPatient);
-                      }
-                      else {
+                      } else {
                         PatientService.postPatient(changedPatient);
                       }
-
                     }
                   },
                   child: const Text('Atualizar'),

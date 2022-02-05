@@ -4,21 +4,22 @@ import 'package:flutter/services.dart';
 import 'package:patient_navigation_fhir_mobile/services/AppointmentService.dart';
 
 class AppointmentCreateView extends StatelessWidget {
-  const AppointmentCreateView({Key? key}) : super(key: key);
-
+  const AppointmentCreateView({Key? key, required this.patient}) : super(key: key);
+  final Patient patient;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Criação de um apontamento'),
         ),
-        body: MyCustomForm());
+        body: MyCustomForm(patient: patient));
   }
 }
 
 // Create a Form widget.
 class MyCustomForm extends StatefulWidget {
-  const MyCustomForm({Key? key}) : super(key: key);
+  const MyCustomForm({Key? key, required this.patient}) : super(key: key);
+  final Patient patient;
   @override
   MyCustomFormState createState() {
     return MyCustomFormState();
@@ -45,7 +46,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   final controllerenddate = TextEditingController();
   final controllercomment = TextEditingController();
 
-  List<String> _locations = AppointmentStatus.values
+  final List<String> _locations = AppointmentStatus.values
       .map((e) => e.toString().split(".")[1])
       .toList(); // Option 2
   final List<String> _locationsType = [

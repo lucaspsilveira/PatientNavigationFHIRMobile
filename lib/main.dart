@@ -68,33 +68,33 @@ class _MyHomePageState extends State<MyHomePage> {
                         );
                 },
           backgroundColor: Colors.green,
-          child: const Icon(Icons.person_add,
-        ),
-      ),
-      FloatingActionButton(
-          onPressed: () {
-                  Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AppointmentCreateView()),
-                        );
-                },
-          backgroundColor: Colors.blue,
-          child: const Icon(Icons.date_range,
-        ),
-      ),
-      FloatingActionButton(
-           onPressed: () {
-                  Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProcedureCreateView(patient: Patient())),
-                        );
-                },
-          backgroundColor: Colors.red,
-          child: const Icon(Icons.medication_outlined
-        ),
-      ),
+          child: const Icon(Icons.person_add)
+      )
+      // ),
+      // FloatingActionButton(
+      //     onPressed: () {
+      //             Navigator.push(
+      //                     context,
+      //                     MaterialPageRoute(
+      //                         builder: (context) => AppointmentCreateView()),
+      //                   );
+      //           },
+      //     backgroundColor: Colors.blue,
+      //     child: const Icon(Icons.date_range,
+      //   ),
+      // ),
+      // FloatingActionButton(
+      //      onPressed: () {
+      //             Navigator.push(
+      //                     context,
+      //                     MaterialPageRoute(
+      //                         builder: (context) => ProcedureCreateView(patient: Patient())),
+      //                   );
+      //           },
+      //     backgroundColor: Colors.red,
+      //     child: const Icon(Icons.medication_outlined
+      //   ),
+      // ),
     ];
     return Scaffold(
       appBar: AppBar(
@@ -110,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: _floatingButtonsList.elementAt(_selectedIndex),
+      floatingActionButton: _selectedIndex == 0 ?_floatingButtonsList.elementAt(_selectedIndex) : null,
       bottomNavigationBar: BottomNavigationBar(
         iconSize: 30,
         items: const <BottomNavigationBarItem>[
@@ -125,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.medical_services),
             label: 'Procedimentos',
-          ),
+          )
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
