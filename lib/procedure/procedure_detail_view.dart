@@ -153,8 +153,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Realizando ação')),
                       );
-
-                        // ProcedureService.putProcedure(changedProcedure);
+                      var changedProcedure = procedure.copyWith(
+                        followUp: [CodeableConcept(text: controllerfollowup.text)]
+                      );
+                      ProcedureService.putProcedure(changedProcedure);
                     }
                   },
                   child: const Text('Atualizar'),

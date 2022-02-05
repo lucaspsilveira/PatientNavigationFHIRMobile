@@ -7,8 +7,8 @@ import 'package:patient_navigation_fhir_mobile/services/ProcedureService.dart';
 import 'procedure_detail_view.dart';
 
 class ProcedureMainPage extends StatefulWidget {
-  const ProcedureMainPage({Key? key}) : super(key: key);
-
+  const ProcedureMainPage({Key? key, required this.patient}) : super(key: key);
+  final Patient patient;
   @override
   _ProcedureMainPage createState() => _ProcedureMainPage();
 }
@@ -17,7 +17,8 @@ class _ProcedureMainPage extends State<ProcedureMainPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Procedure>>(
-        future: ProcedureService.getProcedures(),
+        future: widget.patient.id?.value != null &&
+                widget.patient.id!.value!.isNotEmpty ? ProcedureService.getProceduresFromSubject(widget.patient.id?.value ?? "") : ProcedureService.getProcedures(),
         builder: (context, AsyncSnapshot<List<Procedure>> snapshot) {
           if (snapshot.hasData) {
             var itemCount = snapshot.data?.length ?? 0;

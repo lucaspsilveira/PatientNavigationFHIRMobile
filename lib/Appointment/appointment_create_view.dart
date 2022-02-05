@@ -63,8 +63,9 @@ class MyCustomFormState extends State<MyCustomForm> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
 
-    //controllerserviceCategory.text = widget.appointment.serviceCategory?.first.coding?.first.display ?? "";
-    //controllerServiceType.text = widget.appointment.serviceType.
+    var firstName = widget.patient.name?.first.given?.first ?? "";
+    var familyName = widget.patient.name?.first.family ?? "";
+    var fullName = firstName + " " + familyName;
 
     return Form(
         key: _formKey,
@@ -240,7 +241,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                           participant: [
                             AppointmentParticipant(
                                 status: AppointmentParticipantStatus.accepted,
-                                actor: Reference(display: "nome do paciente"))
+                                actor: Reference(display: fullName, reference: "Patient/"+(widget.patient.id?.value ?? "")))
                           ]);
                       //appointment.birthDate = Date.fromDateTime(DateTime.parse(controllerbirthDate.text));
 

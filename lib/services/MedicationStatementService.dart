@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 
 class MedicationStatementService {
   static const String server = "http://10.0.2.2:5246";
+  static const String ipAddress = "10.0.2.2:5246";
   static const String resource = "MedicationStatement";
 
   static Future<MedicationStatement> getMedicationStatement(String medicationStatementId) async {
@@ -15,6 +16,25 @@ class MedicationStatementService {
     var medicationStatement = MedicationStatement.fromJson(json.decode(response.body));
     print(json.encode(medicationStatement.toJson()));
     return medicationStatement;
+  }
+
+  static Future<List<MedicationStatement>> getMedicationStatementsFromSubject(String subjectId) async {
+    var headers = {'Content-type': 'application/json'};
+    final queryParameters = {
+      'subjectId': subjectId,
+    };
+    var uri = Uri.http(ipAddress, resource, queryParameters);
+    var response =
+        await get(uri, headers: headers);
+
+    var searchSetBundle = Bundle.fromJson(json.decode(response.body));
+    List<MedicationStatement> listMedicationStatement = [];
+    searchSetBundle.entry?.forEach((a) => {
+      if (a.resource != null) {
+        listMedicationStatement.add(MedicationStatement.fromJson(a.resource!.toJson()))
+      }
+    });
+    return listMedicationStatement;
   }
 
   static Future<List<MedicationStatement>> getMedicationStatements() async {

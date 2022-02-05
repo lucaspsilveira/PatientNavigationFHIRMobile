@@ -2,37 +2,78 @@ import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:patient_navigation_fhir_mobile/Appointment/appointment_create_view.dart';
+import 'package:patient_navigation_fhir_mobile/Appointment/appointment_main_page.dart';
 import 'package:patient_navigation_fhir_mobile/MedicationStatement/medicationstatement_create_view.dart';
+import 'package:patient_navigation_fhir_mobile/MedicationStatement/medicationstatement_detail_view.dart';
+import 'package:patient_navigation_fhir_mobile/MedicationStatement/medicationstatement_main_page.dart';
+import 'package:patient_navigation_fhir_mobile/Patient/patient_main_page.dart';
 import 'package:patient_navigation_fhir_mobile/procedure/procedure_create_view.dart';
+import 'package:patient_navigation_fhir_mobile/procedure/procedure_main_page.dart';
 import 'package:patient_navigation_fhir_mobile/services/PatientService.dart';
 
-class PatientDetailView extends StatelessWidget {
+class PatientDetailView extends StatefulWidget {
   const PatientDetailView({Key? key, required this.patient}) : super(key: key);
   final Patient patient;
+
+  @override
+  State<PatientDetailView> createState() =>
+      _PatientDetailViewState(patient: this.patient);
+}
+
+class _PatientDetailViewState extends State<PatientDetailView> {
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  final Patient patient;
+  _PatientDetailViewState({required this.patient});
+
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _widgetOptions = <Widget>[
+      MyCustomForm(patient: widget.patient),
+      Column(children: [AppointmentMainPage(patient: widget.patient)]),
+      Column(children: [ProcedureMainPage(patient: widget.patient)]),
+      Column(children: [MedicationStatementMainPage(patient: widget.patient)]),
+    ];
     return Scaffold(
         appBar: AppBar(
           title: const Text('Detalhes do paciente'),
         ),
-        body: MyCustomForm(patient: patient),
-        floatingActionButton:
-            // FloatingActionButton(
-            //     backgroundColor: Colors.red,
-            //     child: const Icon(Icons.medication_outlined),
-            //     onPressed: () {
-            //       Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //             builder: (context) =>
-            //                 MedicationStatementCreateView(patient: this.patient)),
-            //       );
-            //     })
-            SpeedDial(
+        body: _widgetOptions[_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          iconSize: 30,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Dados',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today),
+              label: 'Apontamentos',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.medical_services),
+              label: 'Procedimentos',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.medication),
+              label: 'Declarações',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[800],
+          onTap: _onItemTapped,
+        ),
+        floatingActionButton: SpeedDial(
           animatedIcon: AnimatedIcons.menu_close,
           animatedIconTheme: const IconThemeData(size: 22),
           backgroundColor: Colors.blue,
-          visible: patient.id?.value?.isNotEmpty == true,
+          visible: widget.patient.id?.value?.isNotEmpty == true,
           curve: Curves.bounceIn,
           children: [
             // FAB 1
@@ -40,12 +81,12 @@ class PatientDetailView extends StatelessWidget {
                 child: const Icon(Icons.calendar_today_outlined),
                 backgroundColor: Colors.blue,
                 onTap: () {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                         builder: (context) =>
-                             AppointmentCreateView(patient: patient)),
-                   );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AppointmentCreateView(patient: widget.patient)),
+                  );
                 },
                 label: 'Registrar Apontamento',
                 labelStyle: const TextStyle(
@@ -58,12 +99,12 @@ class PatientDetailView extends StatelessWidget {
                 child: const Icon(Icons.healing),
                 backgroundColor: Colors.blue,
                 onTap: () {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                         builder: (context) =>
-                             ProcedureCreateView(patient: patient)),
-                   );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ProcedureCreateView(patient: widget.patient)),
+                  );
                 },
                 label: 'Registrar Procedimento',
                 labelStyle: const TextStyle(
@@ -75,12 +116,12 @@ class PatientDetailView extends StatelessWidget {
                 child: const Icon(Icons.medical_services),
                 backgroundColor: Colors.blue,
                 onTap: () {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                         builder: (context) =>
-                             MedicationStatementCreateView(patient: patient)),
-                   );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MedicationStatementCreateView(
+                            patient: widget.patient)),
+                  );
                 },
                 label: 'Registrar declaração de medicamento',
                 labelStyle: const TextStyle(

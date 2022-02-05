@@ -43,10 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
   
   
 
-  static const List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     PatientMainPage(),
-    AppointmentMainPage(),
-    ProcedureMainPage(),
+    AppointmentMainPage(patient: Patient()),
+    ProcedureMainPage(patient: Patient()),
   ];
 
   void _onItemTapped(int index) {

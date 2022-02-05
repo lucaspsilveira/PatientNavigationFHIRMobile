@@ -3,24 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:patient_navigation_fhir_mobile/services/MedicationStatementService.dart';
 
-class MedicationStatementCreateView extends StatelessWidget {
-  const MedicationStatementCreateView({Key? key, required this.patient})
+class MedicationStatementDetailView extends StatelessWidget {
+  const MedicationStatementDetailView({Key? key, required this.medicationStatement})
       : super(key: key);
-  final Patient patient;
+  final MedicationStatement medicationStatement;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Declaração de medicação'),
         ),
-        body: MyCustomForm(patient: patient));
+        body: MyCustomForm(medicationStatement: medicationStatement));
   }
 }
 
 // Create a Form widget.
 class MyCustomForm extends StatefulWidget {
-  const MyCustomForm({Key? key, required this.patient}) : super(key: key);
-  final Patient patient;
+  const MyCustomForm({Key? key, required this.medicationStatement}) : super(key: key);
+  final MedicationStatement medicationStatement;
   @override
   MyCustomFormState createState() {
     return MyCustomFormState();
@@ -39,7 +39,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   final controllerMedicationName = TextEditingController();
   final controllerNotes = TextEditingController();
   final controllerEffectiveDatetime = TextEditingController();
-
+  String _selectedStatus = "active";
   final _selectStatus = [
     "active",
     "completed",
@@ -50,7 +50,15 @@ class MyCustomFormState extends State<MyCustomForm> {
     "unknown",
     "notTake"
   ];
-  String _selectedStatus = "unknown";
+
+@override
+  void initState() {
+    controllerPatientName.text = widget.medicationStatement.subject.display ?? "";
+    controllerMedicationName.text = widget.medicationStatement.medicationCodeableConcept?.text ?? "";
+    controllerNotes.text = widget.medicationStatement.note?.first.text?.value ?? "";
+    controllerEffectiveDatetime.text = widget.medicationStatement.effectiveDateTime.toString();
+     _selectedStatus = widget.medicationStatement.status?.value ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +66,7 @@ class MyCustomFormState extends State<MyCustomForm> {
 
     //controllerserviceCategory.text = widget.medicationStatement.serviceCategory?.first.coding?.first.display ?? "";
     //controllerServiceType.text = widget.medicationStatement.serviceType.
-    var firstName = widget.patient.name?.first.given?.first ?? "";
-    var familyName = widget.patient.name?.first.family ?? "";
-    var fullName = firstName + " " + familyName;
-    controllerPatientName.text = fullName;
-
+    
     return Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -145,11 +149,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Realizando ação')),
                       );
-                      var medicationStatement = MedicationStatement(
-                          subject: Reference(
-                              reference:
-                                  "Patient/" + (widget.patient.id?.value ?? ""),
-                              display: fullName),
+                      var changedMedicationStatement = widget.medicationStatement.copyWith(
+                          subject: 
+                                  widget.medicationStatement.subject,
                           note: [
                             Annotation(text: Markdown(controllerNotes.text))
                           ],
@@ -158,11 +160,12 @@ class MyCustomFormState extends State<MyCustomForm> {
                           medicationCodeableConcept: CodeableConcept(
                               text: controllerMedicationName.text),
                           status: Code(_selectedStatus));
-                      MedicationStatementService.postMedicationStatement(
-                          medicationStatement);
+                      MedicationStatementService.putMedicationStatement(
+                          changedMedicationStatement);
+                          
                     }
                   },
-                  child: const Text('Criar'),
+                  child: const Text('Atualizar'),
                 ),
               ),
             ],
