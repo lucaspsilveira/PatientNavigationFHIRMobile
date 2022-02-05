@@ -2,32 +2,36 @@ import 'dart:convert';
 
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
-import 'package:patient_navigation_fhir_mobile/Patient/patient_detail_view.dart';
-import 'package:patient_navigation_fhir_mobile/services/PatientService.dart';
+import 'package:patient_navigation_fhir_mobile/services/AppointmentService.dart';
 
-class PatientMainPage extends StatefulWidget {
-  const PatientMainPage({Key? key}) : super(key: key);
+import 'appointment_detail_view.dart';
+
+class AppointmentMainPage extends StatefulWidget {
+  const AppointmentMainPage({Key? key}) : super(key: key);
 
   @override
-  _PatientMainPage createState() => _PatientMainPage();
+  _AppointmentMainPage createState() => _AppointmentMainPage();
 }
 
-class _PatientMainPage extends State<PatientMainPage> {
+class _AppointmentMainPage extends State<AppointmentMainPage> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Patient>>(
-        future: PatientService.getPatients(),
-        builder: (context, AsyncSnapshot<List<Patient>> snapshot) {
+    return FutureBuilder<List<Appointment>>(
+        future: AppointmentService.getAppointments(),
+        builder: (context, AsyncSnapshot<List<Appointment>> snapshot) {
           if (snapshot.hasData) {
             var itemCount = snapshot.data?.length ?? 0;
             List<Widget> lista = [];
             snapshot.data?.forEach((element) {
-              var firstName = element.name?.first.given?.first ?? "";
-              var familyName = element.name?.first.family ?? "";
+              var appointmentType = element.appointmentType?.coding?.first.code?.value ?? "";
+              var patient = element.participant.where((el) => el.actor?.reference?.contains("Patient") == true);
+              var participantName = patient.isNotEmpty ? patient.first.actor?.display : "";
+              var startDate = element.start;
               var a = Card(
                   child: ListTile(
-                leading: const Icon(Icons.person),
-                title: Text(firstName + " " + familyName),
+                leading: const Icon(Icons.calendar_today_outlined),
+                title: Text(appointmentType),
+                subtitle: Text(startDate.toString()),
                 // trailing: Column(
                 //   children: <Widget>[
                 //     IconButton(
@@ -36,7 +40,7 @@ class _PatientMainPage extends State<PatientMainPage> {
                 //         Navigator.push(
                 //           context,
                 //           MaterialPageRoute(
-                //               builder: (context) => PatientDetailView(patient: element)),
+                //               builder: (context) => AppointmentDetailView(patient: element)),
                 //         );
                 //       },
                 //     )
@@ -46,7 +50,7 @@ class _PatientMainPage extends State<PatientMainPage> {
                   Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => PatientDetailView(patient: element)),
+                              builder: (context) => AppointmentDetailView(appointment: element)),
                         );
                 },
               ));
@@ -58,7 +62,7 @@ class _PatientMainPage extends State<PatientMainPage> {
                     shrinkWrap: true,
                     children: lista,
                   ))
-                : const Center(child: Text('No patients'));
+                : const Center(child: Text('No appointments'));
           } else {
             return const CircularProgressIndicator();
           }

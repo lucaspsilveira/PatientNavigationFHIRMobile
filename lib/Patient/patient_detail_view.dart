@@ -227,7 +227,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16.0),
                 child: ElevatedButton(
                   onPressed: () {
                     // Validate returns true if the form is valid, or false otherwise.
@@ -267,7 +267,13 @@ class MyCustomFormState extends State<MyCustomForm> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Realizando ação')),
                       );
-                      PatientService.putPatient(changedPatient);
+                      if (changedPatient.id?.value != null) {
+                        PatientService.putPatient(changedPatient);
+                      }
+                      else {
+                        PatientService.postPatient(changedPatient);
+                      }
+
                     }
                   },
                   child: const Text('Atualizar'),

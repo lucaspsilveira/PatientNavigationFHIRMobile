@@ -1,5 +1,9 @@
+import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
+import 'package:patient_navigation_fhir_mobile/Appointment/appointment_create_view.dart';
 
+import 'Appointment/appointment_main_page.dart';
+import 'Patient/patient_detail_view.dart';
 import 'Patient/patient_main_page.dart';
 
 void main() {
@@ -35,40 +39,11 @@ class _MyHomePageState extends State<MyHomePage> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   
-  static final List<FloatingActionButton> _floatingButtonsList = <FloatingActionButton>[
-      
-      FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          },
-          backgroundColor: Colors.green,
-          child: const Icon(Icons.person_add,
-        ),
-      ),
-      FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          },
-          backgroundColor: Colors.blue,
-          child: const Icon(Icons.date_range,
-        ),
-      ),
-      FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          },
-          backgroundColor: Colors.red,
-          child: const Icon(Icons.medication_outlined
-        ),
-      ),
-    ];
+  
 
   static const List<Widget> _widgetOptions = <Widget>[
     PatientMainPage(),
-    Text(
-      'Index 1: MOSTRA APPT DOS CPX',
-      style: optionStyle,
-    ),
+    AppointmentMainPage(),
     Text(
       'Index 2: PROCEDIMENTOS DOS CPX',
       style: optionStyle,
@@ -83,6 +58,41 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final List<FloatingActionButton> _floatingButtonsList = <FloatingActionButton>[
+      
+      FloatingActionButton(
+          onPressed: () {
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PatientDetailView(patient: Patient())),
+                        );
+                },
+          backgroundColor: Colors.green,
+          child: const Icon(Icons.person_add,
+        ),
+      ),
+      FloatingActionButton(
+          onPressed: () {
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AppointmentCreateView()),
+                        );
+                },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.date_range,
+        ),
+      ),
+      FloatingActionButton(
+          onPressed: () {
+            // Add your onPressed code here!
+          },
+          backgroundColor: Colors.red,
+          child: const Icon(Icons.medication_outlined
+        ),
+      ),
+    ];
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
