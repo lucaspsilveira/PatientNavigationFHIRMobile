@@ -1,6 +1,8 @@
 import 'package:fhir/r4.dart';
 import 'package:flutter/material.dart';
 import 'package:patient_navigation_fhir_mobile/Appointment/appointment_create_view.dart';
+import 'package:patient_navigation_fhir_mobile/procedure/procedure_create_view.dart';
+import 'package:patient_navigation_fhir_mobile/procedure/procedure_main_page.dart';
 
 import 'Appointment/appointment_main_page.dart';
 import 'Patient/patient_detail_view.dart';
@@ -44,10 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static const List<Widget> _widgetOptions = <Widget>[
     PatientMainPage(),
     AppointmentMainPage(),
-    Text(
-      'Index 2: PROCEDIMENTOS DOS CPX',
-      style: optionStyle,
-    ),
+    ProcedureMainPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -85,9 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          },
+           onPressed: () {
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProcedureCreateView(patient: Patient())),
+                        );
+                },
           backgroundColor: Colors.red,
           child: const Icon(Icons.medication_outlined
         ),
